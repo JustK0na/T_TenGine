@@ -1,0 +1,19 @@
+#ifndef T_TENGINE
+#define T_TENGINE
+#include <termios.h>
+#include <time.h>
+//disable two flags from terminal
+//ICANON and ECHO
+//returns old Configuration
+//also sets read to non-block so it wouldnt wait for user enter
+struct termios enableRAWmode();
+//Sets old config back, clears screen
+struct termios escapeRAWmode(struct termios oldConf);
+
+void clearScreen();
+//Prints game name, last clicked button, ticks per second, frames per second
+void infoPrint(char* gameName, char key, int tick, clock_t deltaTmicro);
+char *loadMap(char *filename);
+
+
+#endif 
