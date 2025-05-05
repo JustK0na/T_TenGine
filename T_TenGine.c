@@ -48,28 +48,34 @@ void infoPrint(char *gameName, char key, int a, clock_t deltaTmicro){
 }
 
 
-char *loadMap(char *filename){
+void loadMap(char *filename, map_t *map){
   FILE *fp;
-  char *map;
-  long lSize;
-  
+  int lSize;
+  int cols=0, rows=0;
+  long cursorPos = 0;
   fp = fopen(filename,"rb");
 
   if(fp==0){
     perror("Couldn't open map file :(\n");
     exit(-1);
   }
+  fscanf(fp, "%d", &rows);
+  fscanf(fp, "%d", &cols);
+  cursorPos=ftell(fp);
+  cursorPos++;
+  map->row=rows;
+  map->col=cols;
+
+
   fseek(fp, 0, SEEK_END);
-  lSize = ftell(fp);
+  lSize = ftell(fp)-cursorPos;
   rewind(fp);
+  fseek(fp, cursorPos, SEEK_SET);
 
-  map = calloc(1, lSize+1);
-
-  if(fread(map, lSize, 1, fp)!=1){
+  map->tiles = malloc((lSize+1)*sizeof(char));
+  if(fread(map->tiles, lSize, 1, fp)!=1){
     perror("reading map failed!");
     exit(1);
   }
   fclose(fp);
-
-  return map;
 }

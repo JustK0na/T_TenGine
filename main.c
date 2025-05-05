@@ -11,49 +11,68 @@
 #define MICROSECONDS 1000000
 
 
-typedef struct ball{
-  int pox;
-  int posy;
-}ball;
-
-void update(char *map, float *position, int deltaTmacro){
-
-  *position +=  10000.0f/deltaTmacro;
-
-  printf("\n\n%f\t%f\n\n", *position, 10000.0f/deltaTmacro);
-
-  if(map[(int)*position]!='\n')
-    map[(int)*position]='!';
-  
-  /*
-  if(map[tick%504]!='\n')
-    map[tick%504]='!';*/
+typedef struct ball_t{
+  float posx, posy, speedx, speedy;
+  char sprite;
+}ball_t;
+void createBall(ball_t *ball, float x, float y, char sprite){
+  ball->posx = x;
+  ball->posy = y;
+  ball->speedx=0.12;
+  ball->speedy=0.06;
+  ball->sprite = sprite;
 }
-void draw(char *map){
-    size_t mapSize = strlen(map);
-  for(int i=0; i<=mapSize; i++){
-    if(map[i]=='!')
-      printf("\033[1;31m%c\033[0m",map[i]);
-    else
-    printf("%c", map[i]);
+void updateBall(ball_t *ball, map_t *map,int deltaTmacro){
+  if(map->tiles[(int)((ball->posy+ball->speedy)*map->col + ball->posx)]=='`'){
+    ball->speedx*= -1;
   }
-  //printf("%s", map);
-  
+  else if(map->tiles[(int)((ball->posy+ball->speedy)*map->col + ball->posx)]=='&'){
+    ball->speedy*= -1;
+  }
 
+  ball->posx += ball->speedx;
+  ball->posy += ball->speedy;
+  //printf("posx: %f, posy: %f\t col: %d, row: %d\n", ball->posx, ball->posy, map->col, map->row);
+  //printf("speedx: %f, speedy: %f\n", ball->speedx, ball->speedy);
+}
+void drawBall(ball_t *ball, map_t *map){
+  printf("\033[%d;%dH\033[%d;%df", (int)ball->posy+MARGIN, (int)ball->posx, (int)ball->posy+MARGIN, (int)ball->posx);
+  printf("\033[1;38;5;99m%c\033[0m",ball->sprite);
+}
+
+void drawMap(map_t *map){
+  for(int i=0; i<map->row; i++){
+    for(int j=0; j<map->col; j++){
+      if(map->tiles[map->col * i + j]=='`')
+        printf("\033[30m%c\033[0m", map->tiles[map->col * i + j]);
+      else
+        printf("%c", map->tiles[map->col*i + j]);
+    }
+  }
+}
+
+void update(map_t *map, ball_t *ball, int deltaTmacro){
+  updateBall(ball, map, deltaTmacro);
+}
+
+void draw(map_t *map, ball_t *ball){
+  drawMap(map);
+  drawBall(ball, map);
   fflush(stdout);
 }
 
 int main() {
   
   struct termios oldConf = enableRAWmode();
-  clock_t nowClock, pastClock, deltaTmacro;
+  clock_t nowClock, pastClock, deltaTmacro=0;
   char key;
-  char gameName[32]="Game Name";
-  char *map=NULL;
+  char gameName[32]="Pong";
+  map_t map;
+  ball_t ball;
   int tick=0;
-  float position;
     
-  map=loadMap("map.txt");
+  loadMap("map.T_Tmap", &map);
+  createBall(&ball, 15, 5, '@');
   pastClock = clock();
   
   while(1){
@@ -72,8 +91,8 @@ int main() {
       pastClock = clock();
       clearScreen();
       infoPrint(gameName, key, tick, deltaTmacro);
-      update(map, &position, deltaTmacro);
-      draw(map);
+      update(&map, &ball, deltaTmacro);
+      draw(&map, &ball);
 
       tick=0;
     }

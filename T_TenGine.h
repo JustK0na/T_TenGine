@@ -2,6 +2,19 @@
 #define T_TENGINE
 #include <termios.h>
 #include <time.h>
+
+#define MARGIN 2
+
+typedef struct map_t{
+    int col;
+    int row;
+    char* tiles;
+
+}map_t;
+
+
+
+
 //disable two flags from terminal
 //ICANON and ECHO
 //returns old Configuration
@@ -13,7 +26,7 @@ struct termios escapeRAWmode(struct termios oldConf);
 void clearScreen();
 //Prints game name, last clicked button, ticks per second, frames per second
 void infoPrint(char* gameName, char key, int tick, clock_t deltaTmicro);
-char *loadMap(char *filename);
+void loadMap(char *filename, map_t *map);
 
 
 #endif 
