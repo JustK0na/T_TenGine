@@ -9,8 +9,12 @@
 
 #define FRAMERATE 12
 #define MICROSECONDS 1000000
-#define RED     "\033[1;31m"
-#define RESET   "\033[0m"
+
+
+typedef struct ball{
+  int pox;
+  int posy;
+}ball;
 
 void update(char *map, float *position, int deltaTmacro){
 
@@ -49,7 +53,7 @@ int main() {
   int tick=0;
   float position;
     
-  map=loadMap("mapHUGE.txt");
+  map=loadMap("map.txt");
   pastClock = clock();
   
   while(1){
