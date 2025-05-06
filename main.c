@@ -72,7 +72,7 @@ int main() {
   int tick=0;
     
   loadMap("map.T_Tmap", &map);
-  createBall(&ball, 15, 5, '@');
+  createBall(&ball, 15, 5, '0');
   pastClock = clock();
   
   while(1){

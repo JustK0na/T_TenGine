@@ -13,8 +13,6 @@ typedef struct map_t{
 }map_t;
 
 
-
-
 //disable two flags from terminal
 //ICANON and ECHO
 //returns old Configuration
