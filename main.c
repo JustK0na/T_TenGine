@@ -18,7 +18,7 @@ typedef struct ball_t{
 void createBall(ball_t *ball, float x, float y, char sprite){
   ball->posx = x;
   ball->posy = y;
-  ball->speedx=0.12;
+  ball->speedx=0.0;
   ball->speedy=0.06;
   ball->sprite = sprite;
 }
@@ -32,7 +32,8 @@ void updateBall(ball_t *ball, map_t *map,int deltaTmacro){
 
   ball->posx += ball->speedx;
   ball->posy += ball->speedy;
-  //printf("posx: %f, posy: %f\t col: %d, row: %d\n", ball->posx, ball->posy, map->col, map->row);
+  printf("\033[2J");
+  printf("posx: %f, posy: %f, posyInt: %d\t col: %d, row: %d\n", ball->posx, ball->posy, (int)ball->posy, map->col, map->row);
   //printf("speedx: %f, speedy: %f\n", ball->speedx, ball->speedy);
 }
 void drawBall(ball_t *ball, map_t *map){
