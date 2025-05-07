@@ -50,7 +50,6 @@ void infoPrint(char *gameName, char key, int a, clock_t deltaTmicro){
 
 void loadMap(char *filename, map_t *map){
   FILE *fp;
-  int lSize;
   int cols=0, rows=0;
   long cursorPos = 0;
   fp = fopen(filename,"rb");
@@ -68,14 +67,38 @@ void loadMap(char *filename, map_t *map){
 
 
   fseek(fp, 0, SEEK_END);
-  lSize = ftell(fp)-cursorPos;
   rewind(fp);
   fseek(fp, cursorPos, SEEK_SET);
 
-  map->tiles = malloc((lSize+1)*sizeof(char));
-  if(fread(map->tiles, lSize, 1, fp)!=1){
-    perror("reading map failed!");
-    exit(1);
+  map->tiles = (char **) malloc(sizeof(char *) * rows);
+  for(int i=0; i<rows; i++){
+    map->tiles[i]=(char *) malloc(sizeof(char));
   }
+  for(int i=0; i<rows; i++){
+	fread(map->tiles[i], sizeof(char), cols, fp);
+  }
+  map->col = cols - 1;
   fclose(fp);
+}
+
+void drawMap(map_t *map){
+  for(int i=0; i<map->row; i++){
+    for(int j=0; j<map->col+1; j++){
+      if(map->tiles[i][j]=='`')
+        printf("\033[30m%c\033[0m", map->tiles[i][j]);
+      else
+        printf("%c", map->tiles[i][j]);
+    }
+  }
+}
+
+int rounding(float number){
+  int tmp;
+
+  if(number-(int)number >= 0.51)
+    tmp = (int)number + 1;
+  else
+    tmp = (int)number;
+
+  return tmp;
 }

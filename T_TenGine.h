@@ -8,7 +8,7 @@
 typedef struct map_t{
     int col;
     int row;
-    char* tiles;
+    char** tiles;
 
 }map_t;
 
@@ -25,6 +25,9 @@ void clearScreen();
 //Prints game name, last clicked button, ticks per second, frames per second
 void infoPrint(char* gameName, char key, int tick, clock_t deltaTmicro);
 void loadMap(char *filename, map_t *map);
+void drawMap(map_t *map);
+
+int rounding(float number);
 
 
 #endif 
